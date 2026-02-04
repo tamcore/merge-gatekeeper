@@ -2,7 +2,7 @@
 
 A GitHub Action that ensures all CI checks pass before merging PRs. It polls check runs and commit statuses, retrying while checks are in progress.
 
-This action is implemented using [actions/github-script](https://github.com/actions/github-script) for simplicity and maintainability.
+This action is implemented using [actions/github-script](https://github.com/actions/github-script) for simplicity and maintainability. Its design prioritizes running on lightweight `ubuntu-slim` runners with minimal dependencies or extra tooling, making it efficient and easy to integrate into any CI pipeline.
 
 ## Features
 
