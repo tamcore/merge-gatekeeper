@@ -301,20 +301,12 @@ runs:
            * Generate the GitHub Step Summary
            */
           function generateSummary(results, timedOut) {
-            const categoryEmoji = {
-              self: '🔵',
-              ignored: '⚪',
-              running: '🟡',
-              success: '🟢',
-              failure: '🔴'
-            };
-
-            const categoryLabel = {
-              self: 'Current Job',
-              ignored: 'Ignored',
-              running: 'Running',
-              success: 'Success',
-              failure: 'Failed'
+            const fancyInterpretation = {
+              self: '🙈 Current job',
+              ignored: '🙈 Ignored',
+              running: '⏳ Still running...',
+              success: '✅ All good!',
+              failure: '❌ Something failed.'
             };
 
             // Filter results for summary
@@ -342,20 +334,23 @@ runs:
             const successCount = results.filter(r => r.category === 'success').length;
             const ignoredCount = results.filter(r => r.category === 'ignored').length;
 
-            summary += `**Summary:** ${successCount} passed, ${failureCount} failed, ${runningCount} running, ${ignoredCount} ignored\n\n`;
+            summary += `**Summary:** ${successCount} successful, ${failureCount} failed, ${runningCount} running, ${ignoredCount} ignored\n\n`;
+
+            if (!fullDetailsSummary && (successCount > 0 || ignoredCount > 0)) {
+              summary += `> ℹ️ ${successCount} successful, ${ignoredCount} ignored. Enable full-details-summary to see them.\n\n`;
+            }
 
             if (summaryResults.length > 0) {
-              summary += '| Status | Name | Type | Details |\n';
-              summary += '|--------|------|------|---------||\n';
+              summary += '| Check Name | Source | Status | Interpreted as |\n';
+              summary += '|------------|--------|--------|----------------|\n';
 
               for (const result of summaryResults) {
-                const emoji = categoryEmoji[result.category];
-                const label = categoryLabel[result.category];
+                const interpretation = fancyInterpretation[result.category] || '⚠️ Unknown status';
                 const name = result.url ? `[${result.name}](${result.url})` : result.name;
-                const type = result.type === 'check_run' ? 'Check Run' : 'Status';
-                const details = result.conclusion || result.status || '-';
+                const source = result.type === 'check_run' ? 'check run' : 'status';
+                const status = result.conclusion || result.status || '-';
 
-                summary += `| ${emoji} ${label} | ${name} | ${type} | ${details} |\n`;
+                summary += `| ${name} | ${source} | ${status} | ${interpretation} |\n`;
               }
             } else {
               summary += '_No checks to display._\n';
@@ -375,9 +370,9 @@ runs:
             // Exit with appropriate status
             if (hasFailure) {
               const failedChecks = results.filter(r => r.category === 'failure');
-              core.setFailed(`${failedChecks.length} check(s) failed: ${failedChecks.map(r => r.name).join(', ')}`);
+              core.setFailed(`❌ Some CI checks or statuses failed: ${failedChecks.map(r => r.name).join(', ')}`);
             } else {
-              core.info('All required checks passed!');
+              core.info('✅ All CI checks and statuses passed or were skipped.');
             }
           } catch (error) {
             core.setFailed(`Action failed with error: ${error.message}`);
