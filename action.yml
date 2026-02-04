@@ -273,7 +273,11 @@ runs:
                 await sleep(pollingInterval);
               }
 
-              core.info(`Performing check (attempt ${attempt + 1}/${maxRetries + 1})...`);
+              if (attempt === 0) {
+                core.info('Performing initial check...');
+              } else {
+                core.info(`Performing retry ${attempt}/${maxRetries}...`);
+              }
               const { results, hasFailure, hasRunning } = await performCheck();
 
               lastResults = results;
