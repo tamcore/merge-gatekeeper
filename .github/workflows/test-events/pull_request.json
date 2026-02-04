@@ -1,0 +1,14 @@
+{
+  "action": "opened",
+  "number": 1,
+  "pull_request": {
+    "number": 1,
+    "head": {
+      "sha": "abc123",
+      "ref": "feature-branch"
+    },
+    "base": {
+      "ref": "master"
+    }
+  }
+}

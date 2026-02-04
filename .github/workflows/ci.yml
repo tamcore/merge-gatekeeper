@@ -40,3 +40,22 @@ jobs:
                 check-keys: false
               comments:
                 min-spaces-from-content: 1
+
+  self-test:
+    name: Self Test
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      checks: read
+      statuses: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Merge Gatekeeper (self-test)
+        uses: ./
+        with:
+          initial-delay: '1'
+          max-retries: '2'
+          polling-interval: '5'
+          full-details-summary: 'true'
