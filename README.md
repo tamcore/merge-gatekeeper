@@ -28,10 +28,10 @@ permissions:
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `token` | No | `${{ github.token }}` | GitHub token to access PR commit statuses and checks |
-| `initial-delay` | No | `5` | Seconds to sleep before the first check |
+| `github-token` | No | `${{ github.token }}` | GitHub token to access PR commit statuses and checks |
+| `initial-delay-seconds` | No | `5` | Seconds to sleep before the first check |
 | `max-retries` | No | `5` | Number of retries while checks are still in progress |
-| `polling-interval` | No | `60` | Seconds to wait between retry attempts |
+| `polling-interval-seconds` | No | `60` | Seconds to wait between retry attempts |
 | `ignored-name-patterns` | No | `''` | Newline-separated list of regex patterns to exclude jobs |
 | `full-details-summary` | No | `false` | Show all checks in the summary (not just failures) |
 
@@ -60,9 +60,9 @@ jobs:
       - name: Merge Gatekeeper
         uses: tamcore/merge-gatekeeper@master
         with:
-          initial-delay: 10
+          initial-delay-seconds: 10
           max-retries: 10
-          polling-interval: 30
+          polling-interval-seconds: 30
 ```
 
 ### Appended to Existing Workflow
@@ -103,7 +103,7 @@ jobs:
       - name: Merge Gatekeeper
         uses: tamcore/merge-gatekeeper@master
         with:
-          initial-delay: 0
+          initial-delay-seconds: 0
           max-retries: 3
 ```
 

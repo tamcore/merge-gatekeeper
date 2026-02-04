@@ -55,7 +55,7 @@ jobs:
       - name: Run Merge Gatekeeper (self-test)
         uses: ./
         with:
-          initial-delay: '1'
+          initial-delay-seconds: '1'
           max-retries: '2'
-          polling-interval: '5'
+          polling-interval-seconds: '5'
           full-details-summary: 'true'
