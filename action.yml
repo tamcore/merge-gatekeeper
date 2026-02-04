@@ -1,0 +1,64 @@
+name: 'Merge Gatekeeper'
+description: 'Ensures all CI checks pass before allowing a PR to be merged. Polls check runs and commit statuses, retrying while checks are in progress.'
+author: 'Philipp'
+
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  token:
+    description: 'GitHub token to access PR commit statuses and checks'
+    required: false
+    default: ${{ github.token }}
+  initial-delay:
+    description: 'Seconds to sleep before the first check'
+    required: false
+    default: '5'
+  max-retries:
+    description: 'Number of retries while checks are still in progress'
+    required: false
+    default: '5'
+  polling-interval:
+    description: 'Seconds to wait between retry attempts'
+    required: false
+    default: '60'
+  ignored-name-patterns:
+    description: 'Newline-separated list of regex patterns to exclude jobs from evaluation'
+    required: false
+    default: ''
+  full-details-summary:
+    description: 'Show all checks in the summary (not just failures)'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check CI Status
+      uses: actions/github-script@v8
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          // Inputs
+          const initialDelay = parseInt('${{ inputs.initial-delay }}', 10);
+          const maxRetries = parseInt('${{ inputs.max-retries }}', 10);
+          const pollingInterval = parseInt('${{ inputs.polling-interval }}', 10);
+          const ignoredPatterns = `${{ inputs.ignored-name-patterns }}`
+            .split('\n')
+            .map(p => p.trim())
+            .filter(p => p.length > 0)
+            .map(p => new RegExp(p));
+          const fullDetailsSummary = '${{ inputs.full-details-summary }}' === 'true';
+
+          // TODO: Implement API fetching
+          // TODO: Implement classification logic
+          // TODO: Implement retry loop
+          // TODO: Generate summary
+
+          core.info('Merge Gatekeeper initialized');
+          core.info(`Initial delay: ${initialDelay}s`);
+          core.info(`Max retries: ${maxRetries}`);
+          core.info(`Polling interval: ${pollingInterval}s`);
+          core.info(`Ignored patterns: ${ignoredPatterns.length}`);
+          core.info(`Full details summary: ${fullDetailsSummary}`);
