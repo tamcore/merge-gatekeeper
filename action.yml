@@ -202,13 +202,13 @@ runs:
             // Process check runs
             for (const run of checkRuns) {
               const category = classifyCheckRun(run);
-              
+
               // Calculate duration if both timestamps are available
               let duration = null;
               if (run.started_at && run.completed_at) {
                 duration = (new Date(run.completed_at).getTime() - new Date(run.started_at).getTime()) / 1000;
               }
-              
+
               results.push({
                 name: run.name,
                 type: 'check_run',
@@ -240,13 +240,13 @@ runs:
             // Process commit statuses
             for (const status of statuses) {
               const category = classifyStatus(status);
-              
+
               // Calculate duration if both timestamps are available
               let duration = null;
               if (status.created_at && status.updated_at) {
                 duration = (new Date(status.updated_at).getTime() - new Date(status.created_at).getTime()) / 1000;
               }
-              
+
               results.push({
                 name: status.context,
                 type: 'status',
