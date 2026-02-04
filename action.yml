@@ -202,13 +202,22 @@ runs:
             // Process check runs
             for (const run of checkRuns) {
               const category = classifyCheckRun(run);
+              
+              // Calculate duration if both timestamps are available
+              let duration = null;
+              if (run.started_at && run.completed_at) {
+                duration = (new Date(run.completed_at).getTime() - new Date(run.started_at).getTime()) / 1000;
+              }
+              
               results.push({
                 name: run.name,
                 type: 'check_run',
                 category,
                 status: run.status,
                 conclusion: run.conclusion,
-                url: run.html_url
+                url: run.html_url,
+                startedAt: run.started_at || null,
+                duration
               });
 
               // Log status for each check run
@@ -231,13 +240,22 @@ runs:
             // Process commit statuses
             for (const status of statuses) {
               const category = classifyStatus(status);
+              
+              // Calculate duration if both timestamps are available
+              let duration = null;
+              if (status.created_at && status.updated_at) {
+                duration = (new Date(status.updated_at).getTime() - new Date(status.created_at).getTime()) / 1000;
+              }
+              
               results.push({
                 name: status.context,
                 type: 'status',
                 category,
                 status: status.state,
                 conclusion: status.state,
-                url: status.target_url
+                url: status.target_url,
+                startedAt: status.created_at || null,
+                duration
               });
 
               // Log status for each commit status
@@ -366,16 +384,18 @@ runs:
             }
 
             if (summaryResults.length > 0) {
-              summary += '| Check Name | Source | Status | Interpreted as |\n';
-              summary += '|------------|--------|--------|----------------|\n';
+              summary += '| Check Name | Source | Start Time | Duration | Status | Interpreted as |\n';
+              summary += '|------------|--------|------------|----------|--------|----------------|\n';
 
               for (const result of summaryResults) {
                 const interpretation = fancyInterpretation[result.category] || '⚠️ Unknown status';
                 const name = result.url ? `[${result.name}](${result.url})` : result.name;
                 const source = result.type === 'check_run' ? 'check run' : 'status';
                 const status = result.conclusion || result.status || '-';
+                const startTime = result.startedAt || '-';
+                const duration = result.duration != null ? `${Math.round(result.duration)}s` : '-';
 
-                summary += `| ${name} | ${source} | ${status} | ${interpretation} |\n`;
+                summary += `| ${name} | ${source} | ${startTime} | ${duration} | ${status} | ${interpretation} |\n`;
               }
             } else {
               summary += '_No checks to display._\n';
