@@ -42,7 +42,8 @@ jobs:
                 min-spaces-from-content: 1
 
   self-test:
-    name: Self Test
+    # Note: Do NOT add a custom 'name:' here - the action identifies itself
+    # using GITHUB_JOB which always returns the job key, not the display name
     runs-on: ubuntu-latest
     permissions:
       actions: read
